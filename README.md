@@ -1,3 +1,2 @@
-# Building a Consistent RESTful API with OData V4 in ASP.NET
+# ASP.NET RESTful API + OData V4
 
-These are the starter files for my "Building a Consistent RESTful API with OData V4 in ASP.NET" course at Pluralsight (https://app.pluralsight.com/library/courses/asp-dot-net-odata-v4-restful-api/table-of-contents).
