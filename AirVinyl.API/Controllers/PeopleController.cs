@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Http;
 using System.Web.OData;
@@ -75,6 +76,40 @@ namespace AirVinyl.API.Controllers
             var collectionPropertyValue = person.GetValue(collectionPropertyToGet);
 
             return this.CreateOKHttpActionResult(collectionPropertyValue);
+        }
+
+        [HttpGet]
+        [ODataRoute("People({key})/Email/$value")]
+        [ODataRoute("People({key})/FirstName/$value")]
+        [ODataRoute("People({key})/LastName/$value")]
+        [ODataRoute("People({key})/DateOfBirth/$value")]
+        [ODataRoute("People({key})/Gender/$value")]
+        public object GetPersonPropertyRawValue([FromODataUri] int key)
+        {
+            var person = _ctx.People.FirstOrDefault(p => p.PersonId == key);
+            if (person == null)
+            {
+                return NotFound();
+            }
+
+            var propertyToGet = Url.Request.RequestUri.Segments[Url.Request.RequestUri.Segments.Length - 2]
+                .TrimEnd('/');
+            if (!person.HasProperty(propertyToGet))
+            {
+                return NotFound();
+            }
+
+            var propertyValue = person.GetValue(propertyToGet);
+            if (propertyValue == null)
+            {
+                // null = no nontent
+                return StatusCode(HttpStatusCode.NoContent);
+            }
+            else
+            {
+                // return the raw value => ToString()
+                return this.CreateOKHttpActionResult(propertyValue.ToString());
+            }
         }
 
         protected override void Dispose(bool disposing)
