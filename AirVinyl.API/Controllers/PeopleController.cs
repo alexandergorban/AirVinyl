@@ -113,6 +113,9 @@ namespace AirVinyl.API.Controllers
             }
         }
 
+        // [HttpPost]
+        // [ODataRoute("People")]
+        // POST odata/People
         public IHttpActionResult Post(Person person)
         {
             if (!ModelState.IsValid)
@@ -126,6 +129,10 @@ namespace AirVinyl.API.Controllers
             return Created(person);
         }
 
+        // PUT odata/People('key')
+        // [HttpPut]
+        // [ODataRoute("People({key})")]
+        // PUT is for full updates
         public IHttpActionResult Put([FromODataUri] int key, Person person)
         {
             if (!ModelState.IsValid)
@@ -146,6 +153,10 @@ namespace AirVinyl.API.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+        // PATCH odata/People('key')
+        // [HttpPatch]
+        // [ODataRoute("People({key})")]
+        // PATCH is for partial updates
         public IHttpActionResult Patch([FromODataUri] int key, Delta<Person> patch)
         {
             if (!ModelState.IsValid)
@@ -165,6 +176,9 @@ namespace AirVinyl.API.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+        // DELETE odata/People('key')
+        // [HttpDelete]
+        // [ODataRoute("People({key})")]
         public IHttpActionResult Delete([FromODataUri] int key)
         {
             var currentPerson = _ctx.People.Include("Friends").FirstOrDefault(p => p.PersonId == key);
