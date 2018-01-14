@@ -187,6 +187,95 @@ namespace AirVinyl.API.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+        [HttpPost]
+        [ODataRoute("People({key})/Friends/$ref")]
+        public IHttpActionResult CreateLinkToFriend([FromODataUri] int key, [FromBody] Uri link)
+        {
+            var currentPerson = _ctx.People.Include("Friends").FirstOrDefault(p => p.PersonId == key);
+            if (currentPerson == null)
+            {
+                return NotFound();
+            }
+
+            int keyOfFriendToAdd = Request.GetKeyValue<int>(link);
+            if (currentPerson.Friends.Any(i => i.PersonId == keyOfFriendToAdd))
+            {
+                return BadRequest(string.Format("The person with id {0} is already linked to the person with id {1}",
+                    key, keyOfFriendToAdd));
+            }
+
+            var friendToLinkTo = _ctx.People.FirstOrDefault(p => p.PersonId == keyOfFriendToAdd);
+            if (friendToLinkTo == null)
+            {
+                return NotFound();
+            }
+
+            currentPerson.Friends.Add(friendToLinkTo);
+            _ctx.SaveChanges();
+
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        [HttpPut]
+        [ODataRoute("People({key})/Friends({relatedKey})/$ref")]
+        public IHttpActionResult UpdateLinkToFriend([FromODataUri] int key, [FromODataUri] int relatedKey,
+            [FromBody] Uri link)
+        {
+            var currentPerson = _ctx.People.Include("Friends").FirstOrDefault(p => p.PersonId == key);
+            if (currentPerson == null)
+            {
+                return NotFound();
+            }
+
+            var currentFriend = currentPerson.Friends.FirstOrDefault(f => f.PersonId == relatedKey);
+            if (currentFriend == null)
+            {
+                return NotFound();
+            }
+
+            int keyOfFriendToAdd = Request.GetKeyValue<int>(link);
+            if (currentPerson.Friends.Any(f => f.PersonId == keyOfFriendToAdd))
+            {
+                return BadRequest(string.Format("The person with id {0} is already linked to the person with id {1}",
+                    key, keyOfFriendToAdd));
+            }
+
+            var friendToLinkTo = _ctx.People.FirstOrDefault(p => p.PersonId == keyOfFriendToAdd);
+            if (friendToLinkTo == null)
+            {
+                return NotFound();
+            }
+
+            currentPerson.Friends.Remove(currentFriend);
+            currentPerson.Friends.Add(friendToLinkTo);
+            _ctx.SaveChanges();
+
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        // DELETE odata/People('key')/Friends/$ref?$id={'relatedUriWithRalatedKey'}
+        [HttpDelete]
+        [ODataRoute("People({key})/Friends({relatedKey})/$ref")]
+        public IHttpActionResult DeleteLinkToFriend([FromODataUri] int key, [FromODataUri] int relatedKey)
+        {
+            var currentPerson = _ctx.People.Include("Friends").FirstOrDefault(p => p.PersonId == key);
+            if (currentPerson == null)
+            {
+                return NotFound();
+            }
+
+            var friend = currentPerson.Friends.FirstOrDefault(f => f.PersonId == relatedKey);
+            if (friend == null)
+            {
+                return NotFound();
+            }
+
+            currentPerson.Friends.Remove(friend);
+            _ctx.SaveChanges();
+
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
         protected override void Dispose(bool disposing)
         {
             _ctx.Dispose();
