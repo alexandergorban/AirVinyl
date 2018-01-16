@@ -56,6 +56,41 @@ namespace AirVinyl.API.Controllers
             return this.CreateOKHttpActionResult(collectionPropertyValue);
         }
 
+        [HttpGet]
+        [ODataRoute("RecordStores({key})/AirVinyl.Functions.IsHighRated(minimumRating={minimumRating})")]
+        public bool IsHighRated([FromODataUri] int key, int minimumRating)
+        {
+            // get the RecordStore
+            var recordStore = _ctx.RecordStores
+                .FirstOrDefault(p => p.RecordStoreId == key
+                                     && p.Ratings.Any()
+                                     && (p.Ratings.Sum(r => r.Value) / p.Ratings.Count) >= minimumRating);
+            return (recordStore != null);
+        }
+
+        [HttpGet]
+        [ODataRoute("RecordStores/AirVinyl.Functions.AreRatedBy(personIds={personIds})")]
+        public IHttpActionResult AreRatedBy([FromODataUri] IEnumerable<int> personIds)
+        {
+            // get the RecordStores
+            var recordStores = _ctx.RecordStores
+                .Where(p => p.Ratings.Any(r => personIds.Contains(r.RatedBy.PersonId)));
+
+            return this.CreateOKHttpActionResult(recordStores);
+        }
+
+        [HttpGet]
+        [ODataRoute("GetHighRatedRecordStores(minimumRating={minimumRating})")]
+        public IHttpActionResult GetHighRatedRecordStores([FromODataUri] int minimumRating)
+        {
+            // get the RecordStores
+            var recordStores = _ctx.RecordStores
+                .Where(p => p.Ratings.Any()
+                            && (p.Ratings.Sum(r => r.Value) / p.Ratings.Count) >= minimumRating);
+
+            return this.CreateOKHttpActionResult(recordStores);
+        }
+
         protected override void Dispose(bool disposing)
         {
             // dispose the context

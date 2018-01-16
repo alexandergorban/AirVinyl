@@ -28,6 +28,21 @@ namespace AirVinyl.API
             //builder.EntitySet<VinylRecord>("VinylRecords");
             builder.EntitySet<RecordStore>("RecordStores");
 
+            var isHighRatedFunction = builder.EntityType<RecordStore>().Function("IsHighRated");
+            isHighRatedFunction.Returns<bool>();
+            isHighRatedFunction.Parameter<int>("minimumRating");
+            isHighRatedFunction.Namespace = "AirVinyl.Functions";
+
+            var areRatedByFunction = builder.EntityType<RecordStore>().Collection.Function("AreRatedBy");
+            areRatedByFunction.ReturnsCollectionFromEntitySet<RecordStore>("RecordStore");
+            areRatedByFunction.CollectionParameter<int>("personIds");
+            areRatedByFunction.Namespace = "AirVinyl.Functions";
+
+            var getHighRatedRecordStoresFunction = builder.Function("GetHighRatedRecordStores");
+            getHighRatedRecordStoresFunction.Parameter<int>("minimumRating");
+            getHighRatedRecordStoresFunction.ReturnsCollectionFromEntitySet<RecordStore>("RecordStores");
+            getHighRatedRecordStoresFunction.Namespace = "AirVinyl.Functions";
+
             return builder.GetEdmModel();
         }
     }

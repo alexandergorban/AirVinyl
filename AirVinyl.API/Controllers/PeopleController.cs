@@ -148,7 +148,7 @@ namespace AirVinyl.API.Controllers
         }
 
         [HttpPatch]
-        [ODataRoute("People({key})/VinylRocords({vinylRecordKey})")]
+        [ODataRoute("People({key})/VinylRecords({vinylRecordKey})")]
         public IHttpActionResult PartiallyUpdateVinylRecordForPerson([FromODataUri] int key, [FromODataUri] int vinylRecordKey, Delta<VinylRecord> patch)
         {
             if (!ModelState.IsValid)
@@ -179,7 +179,7 @@ namespace AirVinyl.API.Controllers
         }
 
         [HttpDelete]
-        [ODataRoute("People({key})VinylRecords({vinylRecordKey})")]
+        [ODataRoute("People({key})/VinylRecords({vinylRecordKey})")]
         public IHttpActionResult DeleteVinylRecordForPerson([FromODataUri] int key, [FromODataUri] int vinylRecordKey)
         {
             var currentPerson = _ctx.People.FirstOrDefault(p => p.PersonId == key);
