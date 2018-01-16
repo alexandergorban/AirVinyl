@@ -98,6 +98,28 @@ namespace AirVinyl.API.Controllers
         }
 
         [HttpGet]
+        [EnableQuery]
+        [ODataRoute("People({key})/VinylRecords({vinylRecordKey})")]
+        public IHttpActionResult GetVinylRecordForPerson([FromODataUri] int key, [FromODataUri] int vinylRecordKey)
+        {
+            var person = _ctx.People.FirstOrDefault(p => p.PersonId == key);
+            if (person == null)
+            {
+                return NotFound();
+            }
+
+            // queryable, no FirstOrDefauld
+            var vinylRecords =
+                _ctx.VinylRecords.Where(v => v.Person.PersonId == key && v.VinylRecordId == vinylRecordKey);
+            if (!vinylRecords.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(SingleResult.Create(vinylRecords));
+        }
+
+        [HttpGet]
         [ODataRoute("People({key})/Email/$value")]
         [ODataRoute("People({key})/FirstName/$value")]
         [ODataRoute("People({key})/LastName/$value")]
