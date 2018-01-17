@@ -8,6 +8,7 @@ using System.Web.OData;
 using System.Web.OData.Routing;
 using AirVinyl.API.Helpers;
 using AirVinyl.DataAccessLayer;
+using AirVinyl.Model;
 
 namespace AirVinyl.API.Controllers
 {
@@ -119,6 +120,24 @@ namespace AirVinyl.API.Controllers
 
             // return the collection
             return Ok(_ctx.VinylRecords.Where(v => v.Person.PersonId == 6));
+        }
+
+        [HttpPatch]
+        [ODataRoute("Tim")]
+        public IHttpActionResult Patch(Delta<Person> patch)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var currentPerson = _ctx.People.FirstOrDefault(p => p.PersonId == 6);
+
+            // apply the patch, and save the changes
+            patch.Patch(currentPerson);
+            _ctx.SaveChanges();
+
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         protected override void Dispose(bool disposing)

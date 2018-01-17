@@ -283,7 +283,7 @@ namespace AirVinyl.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
 
             var currentPerson = _ctx.People.FirstOrDefault(p => p.PersonId == key);
