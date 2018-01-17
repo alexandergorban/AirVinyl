@@ -66,7 +66,6 @@ namespace AirVinyl.API.Controllers
 
         [HttpGet]
         [ODataRoute("People({key})/Friends")]
-        //[ODataRoute("People({key})/VinylRecords")]
         [EnableQuery]
         public IHttpActionResult GetPersonCollectionProperty([FromODataUri] int key)
         {

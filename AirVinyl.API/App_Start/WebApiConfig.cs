@@ -58,6 +58,8 @@ namespace AirVinyl.API
             removeRecordStoreRatingsAction.Parameter<int>("personId");
             removeRecordStoreRatingsAction.Namespace = "AirVinyl.Actions";
 
+            builder.Singleton<Person>("Tim");
+
             return builder.GetEdmModel();
         }
     }
