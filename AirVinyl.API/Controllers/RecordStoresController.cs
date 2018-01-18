@@ -246,6 +246,29 @@ namespace AirVinyl.API.Controllers
 
         }
 
+        [HttpGet]
+        [ODataRoute("RecordStores/AirVinyl.Model.SpecializedRecordStore")]
+        [EnableQuery]
+        public IHttpActionResult GetSpecializedStores()
+        {
+            var specializedStores = _ctx.RecordStores.Where(r => r is SpecializedRecordStore);
+            return Ok(specializedStores.Select(s => s as SpecializedRecordStore));
+        }
+
+        [HttpGet]
+        [ODataRoute("RecordStores({key})/AirVinyl.Model.SpecializedRecordStore")]
+        [EnableQuery]
+        public IHttpActionResult GetSpecializedStore([FromODataUri] int key)
+        {
+            var specializedStores = _ctx.RecordStores.Where(r => r is SpecializedRecordStore && r.RecordStoreId == key);
+            if (!specializedStores.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(SingleResult.Create(specializedStores.Select(s => s as SpecializedRecordStore)));
+        }
+
         protected override void Dispose(bool disposing)
         {
             // dispose the context
