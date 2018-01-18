@@ -269,6 +269,63 @@ namespace AirVinyl.API.Controllers
             return Ok(SingleResult.Create(specializedStores.Select(s => s as SpecializedRecordStore)));
         }
 
+        [HttpPost]
+        [ODataRoute("RecordStores")]
+        public IHttpActionResult CreateRecordStore(RecordStore recordStore)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // add the RecordStore
+            _ctx.RecordStores.Add(recordStore);
+            _ctx.SaveChanges();
+
+            return Created(recordStore);
+        }
+
+        [HttpPatch]
+        [ODataRoute("RecordStores({key})")]
+        [ODataRoute("RecordStores({key})/AirVinyl.Model.SpecializedRecordStore")]
+        public IHttpActionResult UpdateRecordStorePartially([FromODataUri] int key, Delta<RecordStore> patch)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // find a matching record store
+            var currentRecordStore = _ctx.RecordStores.FirstOrDefault(p => p.RecordStoreId == key);
+            if (currentRecordStore == null)
+            {
+                return NotFound();
+            }
+
+            patch.Patch(currentRecordStore);
+            _ctx.SaveChanges();
+
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        [HttpDelete]
+        [ODataRoute("RecordStores({key})")]
+        [ODataRoute("RecordStores({key})/AirVinyl.Model.SpecializedRecordStore")]
+        public IHttpActionResult DeleteRecordStore([FromODataUri] int key)
+        {
+            var currentRecordStore = _ctx.RecordStores.Include("Ratings").FirstOrDefault(p => p.RecordStoreId == key);
+            if (currentRecordStore == null)
+            {
+                return NotFound();
+            }
+
+            currentRecordStore.Ratings.Clear();
+            _ctx.RecordStores.Remove(currentRecordStore);
+            _ctx.SaveChanges();
+
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
         protected override void Dispose(bool disposing)
         {
             // dispose the context
