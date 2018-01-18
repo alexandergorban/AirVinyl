@@ -164,8 +164,9 @@ namespace AirVinyl.API.Controllers
             }
 
             // find a matching vinyl record
-            var currentVinylRecord =
-                _ctx.VinylRecords.FirstOrDefault(p => p.VinylRecordId == vinylRecordKey && p.Person.PersonId == key);
+            var currentVinylRecord =_ctx.VinylRecords
+                .Include("DynamicVinylRecordProperties")
+                .FirstOrDefault(p => p.VinylRecordId == vinylRecordKey && p.Person.PersonId == key);
             if (currentVinylRecord == null)
             {
                 return NotFound();
