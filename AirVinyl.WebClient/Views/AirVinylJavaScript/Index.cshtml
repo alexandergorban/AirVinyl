@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewBag.Title = "AirVinyl JavaScript Client";
+}
+
+<script type="text/javascript" src="~/Scripts/odatajs-4.0.0.min.js"></script>
+
+<script>
+    function LoadData() {
+        var request = {
+            requestUri: "http://localhost:15707/odata/People",
+            method: "GET",
+            headers: { Accept: "application/json" }
+        };
+
+        odatajs.oData.request(request,
+            function(data, response) {
+                var responseData = data.value;
+                var formattedResults = "";
+                responseData.forEach(function(entry) {
+                    formattedResults = formattedResults.concat(JSON.stringify(entry));
+                });
+
+                var resultsDiv = document.getElementById("results");
+                resultsDiv.innerHTML = formattedResults;
+            },
+            function(err) {
+                alert("Something went wrong: " + err.message);
+            });
+    }
+</script>
+
+<h2>AirVinyl JavaScript Client</h2>
+<button onclick="LoadData()">GET</button>
+<div id="results"></div>
+
