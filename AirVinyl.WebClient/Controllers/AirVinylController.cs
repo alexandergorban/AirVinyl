@@ -21,13 +21,20 @@ namespace AirVinyl.WebClient.Controllers
                 .Expand(p => p.VinylRecords)
                 .Execute() as QueryOperationResponse<Person>;
 
+            var peopleAsList = peopleResponse.ToList();
+
+            DataServiceQueryContinuation<Person> token = peopleResponse.GetContinuation();
+
+            peopleResponse = context.Execute(token);
+            peopleAsList = peopleResponse.ToList();
+
             string additionalData = "Total count:" + peopleResponse.TotalCount.ToString();
 
             var personResponse = context.People.ByKey(1).GetValue();
 
             return View(new AirVinylViewModel()
             {
-                People = peopleResponse,
+                People = peopleAsList,
                 Person = personResponse,
                 AdditionalData = additionalData
             });
