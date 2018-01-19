@@ -37,7 +37,7 @@
         };
 
         var request = {
-            requestUrl: "http://localhost:15707/odata/People",
+            requestUri: "http://localhost:15707/odata/People",
             method: "POST",
             headers: { Accept: "application/json", "Content-Type": "application/json" },
             data: newPerson
@@ -61,7 +61,7 @@
         };
 
         var request = {
-            requestUrl: "http://localhost:15707/odata/People(8)",
+            requestUri: "http://localhost:15707/odata/People(8)",
             method: "PATCH",
             headers: { Accept: "application/json", "Content-Type": "application/json" },
             data: changeSetForPatch
@@ -81,7 +81,7 @@
 
     function DeletePerson() {
         var request = {
-            requestUrl: "http://localhost:15707/odata/People(8)",
+            requestUri: "http://localhost:15707/odata/People(8)",
             method: "DELETE",
             headers: { Accept: "application/json", "Content-Type": "application/json" },
         };
